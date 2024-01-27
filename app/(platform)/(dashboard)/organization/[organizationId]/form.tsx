@@ -1,23 +1,21 @@
 "use client";
 
 import { create } from "@/actions/create-board";
-import { Button } from "@/components/ui/button";
 import { useFormState } from "react-dom";
+import FormButton from "./form-button";
+import { FormInput } from "./form-input";
 
 export const Form = () => {
   const initialState = { message: null, errors: {} };
+  // @ts-ignore
   const [state, dispatch] = useFormState(create, initialState);
 
   return (
     <form action={dispatch}>
-      <input
-        id="title"
-        name="title"
-        placeholder="Enter a board name"
-        required
-        className="border border-black p-1 rounded-md"
-      />
-      <Button type="submit">Submit</Button>
+      <div className="flex flex-col py-2">
+        <FormInput errors={state?.errors} />
+      </div>
+      <FormButton />
     </form>
   );
 };
