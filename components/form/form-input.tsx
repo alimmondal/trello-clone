@@ -6,7 +6,7 @@ interface FormInputProps {
   type?: string;
   placeholder?: string;
   required?: boolean;
-  disabled: boolean;
+  disabled?: boolean;
   errors?: Record<string, string[] | undefined>;
   className?: string;
   defaultValue?: string;
@@ -17,8 +17,9 @@ import { forwardRef } from "react";
 import { useFormStatus } from "react-dom";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import FormErrors from "./form-errors";
 
-const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
   (
     {
       id,
@@ -43,7 +44,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
               htmlFor={id}
               className="text-xs font-semibold text-neutral-700"
             >
-              label
+              {label}
             </Label>
           ) : null}
           <Input
@@ -60,6 +61,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
             aria-describedby={`${id}-error`}
           />
         </div>
+        <FormErrors id={id} errors={errors} />
       </div>
     );
   }
