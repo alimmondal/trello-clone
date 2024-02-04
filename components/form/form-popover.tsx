@@ -3,6 +3,8 @@
 import { createBoard } from "@/actions/create-board";
 import { useAction } from "@/hooks/use-action";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ElementRef, useRef } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import {
@@ -12,8 +14,8 @@ import {
   PopoverTrigger,
 } from "../ui/popover";
 import { FormInput } from "./form-input";
-import FormSubmit from "./form-submit";
 import FormPicker from "./form-picker";
+import FormSubmit from "./form-submit";
 
 interface FormPopoverProps {
   children: React.ReactNode;
@@ -28,10 +30,15 @@ const FormPopover = ({
   align,
   sideOffset,
 }: FormPopoverProps) => {
+  const router = useRouter();
+  const closeRef = useRef<ElementRef<"button">>(null);
+
   const { execute, fieldErrors } = useAction(createBoard, {
     onSuccess: (data) => {
-      console.log({ data });
+      // console.log({ data });
       toast.success("Board created successfully");
+      closeRef.current?.click();
+      router.push(`/board/${data.id}`);
     },
     onError: (error) => {
       console.log({ error });
@@ -43,8 +50,8 @@ const FormPopover = ({
     const title = formData.get("title") as string;
     const image = formData.get("image") as string;
 
-    console.log({ image });
-    // execute({ title });
+    // console.log({ image });
+    execute({ title, image });
   };
 
   return (
@@ -59,7 +66,7 @@ const FormPopover = ({
         <div className="text-sm font-medium text-center text-neutral-600 pb-4">
           Create board
         </div>
-        <PopoverClose asChild>
+        <PopoverClose ref={closeRef} asChild>
           <Button
             className="h-auto w-auto absolute top-2 right-2 text-neutral-600"
             variant="ghost"
@@ -77,7 +84,9 @@ const FormPopover = ({
               errors={fieldErrors}
             />
           </div>
-          <FormSubmit className="w-full">Create</FormSubmit>
+          <FormSubmit variant="primary" className="w-full">
+            Create
+          </FormSubmit>
         </form>
       </PopoverContent>
     </Popover>

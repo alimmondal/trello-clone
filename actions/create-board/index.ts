@@ -1,31 +1,59 @@
 "use server";
 
+import { createSafeAction } from "@/lib/create-safe-action";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
-import { InputType, ReturnType } from "./types";
 import { CreateBoard } from "./schema";
-import { createSafeAction } from "@/lib/create-safe-action";
+import { InputType, ReturnType } from "./types";
 
 // import { InputType, ReturnType } from "./types.ts";
 
 const handler = async (data: InputType): Promise<ReturnType> => {
-  const { userId } = auth();
+  const { userId, orgId } = auth();
 
-  if (!userId) {
+  if (!userId || !orgId) {
     return {
       error: "Unauthorized",
     };
   }
 
-  const { title } = data;
+  const { title, image } = data;
 
+  const [imageId, imageThumbUrl, imageFullUrl, imageLinkHTML, imageUserName] =
+    image.split("|");
+
+  // console.log({
+  //   imageId,
+  //   imageThumbUrl,
+  //   imageFullUrl,
+  //   imageLinkHTML,
+  //   imageUserName,
+  // })
+
+  if (
+    !imageId ||
+    !imageThumbUrl ||
+    !imageFullUrl ||
+    !imageLinkHTML ||
+    !imageUserName
+  ) {
+    return {
+      error: "Missing fields, Failed to create board",
+    };
+  }
   let board;
 
   try {
     board = await db.board.create({
       data: {
         title,
+        orgId,
+        imageId,
+        imageThumbUrl,
+        imageFullUrl,
+        imageLinkHTML,
+        imageUserName,
       },
     });
   } catch (error) {
