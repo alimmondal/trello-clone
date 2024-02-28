@@ -8,9 +8,7 @@ import { useEventListener, useOnClickOutside } from "usehooks-ts";
 
 import { Button } from "@/components/ui/button";
 import { useAction } from "@/hooks/use-action";
-// import { createList } from "@/actions/create-list";
 import { FormInput } from "@/components/form/form-input";
-// import { FormSubmit } from "@/components/form/form-submit";
 
 import { createList } from "@/actions/create-list";
 import FormSubmit from "@/components/form/form-submit";
